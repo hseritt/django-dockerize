@@ -12,7 +12,8 @@ Make any changes to the top of dockerize.sh:
 # Whatever you want to call the main project folder
 MASTER_PROJECT_NAME="master-project" 
 
-# The python version you would like to use. Keep in mind this script won't install it for you. Use pyenv for that :-P
+# The python version you would like to use. Keep in mind 
+# this script won't install it for you. Use pyenv for that :-P
 PYTHON_VERSION="3.10.8"
 
 # Your Django project name. This will be created by the script.

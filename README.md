@@ -1,3 +1,39 @@
+# Dockerize
+
+Dockerize allows you to create a Django project and then containerize it with a dev and prod environment (uses nginx and gunicorn). It also sets up a Postgresql database.
+
+## How to Use It
+
+Copy the dockerize.sh script along wit the files directory (no need to include the files_static, it won't hurt but you won't need it).
+
+Make any changes to the top of dockerize.sh:
+
+```
+# Whatever you want to call the main project folder
+MASTER_PROJECT_NAME="master-project" 
+
+# The python version you would like to use. Keep in mind this script won't install it for you. Use pyenv for that :-P
+PYTHON_VERSION="3.10.8"
+
+# Your Django project name. This will be created by the script.
+DJANGO_PROJECT_NAME="myproject"
+
+# The database name
+DB_NAME="myproject"
+
+# The database user
+DB_USER="admin"
+
+# The database password
+DB_PASS="admin"
+```
+
+Run dockerize:
+
+```
+./dockerize.sh
+```
+
 ## Project Setup
 
 Create the master project directory:

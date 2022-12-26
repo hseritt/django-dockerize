@@ -75,6 +75,8 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 
 ## Project Setup
 
+Instructions below are for manual steps to creating docker containers for your project should they be needed or helpful in understanding.
+
 Create the master project directory:
 
 ```

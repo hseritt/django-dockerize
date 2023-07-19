@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.10.8-alpine
+FROM python:3.11.4-alpine
 
 # set work directory
 WORKDIR /usr/src/$DJANGO_PROJECT_NAME

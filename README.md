@@ -37,40 +37,56 @@ Run dockerize:
 
 ## Modify Project to Use Environment Variables
 
-Consider changing these parts in your project settings file to take advantage of the .env files:
+Consider changing these parts in your project settings file to take advantage of your .env files using django-environ:
 
 ```
-SECRET_KEY = os.environ.get("SECRET_KEY")
+import environ
+import os
+from pathlib import Path
 
-DEBUG = int(os.environ.get("DEBUG", default=0))
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
 
-# 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
-# For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = env("SECRET_KEY")
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = env("DEBUG")
 
 ...
 
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
-        "USER": os.environ.get("SQL_USER", "user"),
-        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
-        "HOST": os.environ.get("SQL_HOST", "localhost"),
-        "PORT": os.environ.get("SQL_PORT", "5432"),
+        "ENGINE": env("SQL_ENGINE"),
+        "HOST": env("SQL_HOST"),
+        "NAME": env("SQL_DATABASE"),
+        "PORT": env("SQL_PORT"),
+        "USER": env("SQL_USER"),
+        "PASSWORD": env("SQL_PASSWORD"),
     }
 }
-
 ```
 
 Also, this can be used with the static and media files setup with Nginx:
 
 ```
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "staticfiles"]
+STATIC_ROOT = "/tmp/staticfiles"
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "mediafiles"
+MEDIA_ROOT = "/home/www/web/mediafiles"
 ```
 
 ## Project Setup
@@ -97,7 +113,7 @@ vi runtime.txt
 Add something like:
 
 ```
-python-3.10.8
+python-3.11.4
 ```
 
 Set the virtual environment:
@@ -119,7 +135,7 @@ vi requirements.in
 Add in django lts level, psycopg2, gunicorn, black, pip-tools like so:
 
 ```
-django==3.2.16
+django==4.2.3
 psycopg2-binary
 gunicorn
 
@@ -272,7 +288,7 @@ Add the following to Dockerfile:
 
 ```
 # pull official base image
-FROM python:3.10.8-alpine
+FROM python:3.11.4-alpine
 
 # set work directory
 WORKDIR /usr/src/myproject
@@ -310,7 +326,7 @@ Add the following to Dockerfile.prod:
 ###########
 
 # pull official base image
-FROM python:3.10.8-alpine as builder
+FROM python:3.11.4-alpine as builder
 
 # set work directory
 WORKDIR /usr/src/myproject
@@ -339,7 +355,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/myproject/wheels -r 
 #########
 
 # pull official base image
-FROM python:3.10.8-alpine
+FROM python:3.11.4-alpine
 
 # create directory for the app user
 RUN mkdir -p /home/myproject
@@ -435,7 +451,7 @@ Dockerfile, nginx.conf
 Add the following to nginx/Dockerfile:
 
 ```
-FROM nginx:1.21-alpine
+FROM nginx:1.25-alpine
 
 RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/conf.d

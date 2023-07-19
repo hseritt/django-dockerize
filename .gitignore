@@ -1,3 +1,5 @@
 *.pyc
 myproject/
 .vscode/
+master-project/
+pyenv/

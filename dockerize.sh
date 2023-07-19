@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 MASTER_PROJECT_NAME="master-project"
-PYTHON_VERSION="3.10.8"
+PYTHON_VERSION="3.11.4"
 DJANGO_PROJECT_NAME="myproject"
 DB_NAME="myproject"
 DB_USER="admin"

@@ -105,11 +105,15 @@ function add_scripts() {
     echo "  Done"
 }
 
+function modify_django_settings() {
+    echo 'STATIC_ROOT = BASE_DIR / "staticfiles"' >> $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/settings.py
+}
+
 function show_directions() {
     echo "Now, cd into " $MASTER_PROJECT_NAME
     echo "Run source pyenv/bin/activate"
     echo "Run ./getdeps.sh"
-    echo "And then run either ./dev-up.sh or ./prod-up.sh"
+    echo "And then run either (sudo) ./dev-up.sh or (sudo) ./prod-up.sh"
 }
 
 create_master_project;
@@ -122,4 +126,5 @@ add_env_files;
 add_docker_files;
 setup_nginx;
 add_scripts;
+modify_django_settings;
 show_directions;

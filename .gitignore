@@ -3,3 +3,5 @@ myproject/
 .vscode/
 master-project/
 pyenv/
+venv/
+.venv/

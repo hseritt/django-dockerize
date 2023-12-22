@@ -24,27 +24,48 @@ function set_runtime() {
 
 function build_virtual_env() {
     echo "Building virtual environment ..."
-    python -m venv pyenv
-    source pyenv/bin/activate
-    echo "  Done"
+    if python -m venv pyenv; then
+        source pyenv/bin/activate
+        echo "  Done"
+    else
+        echo "  Error: Failed to create the virtual environment."
+        exit 1
+    fi
 }
 
 function setup_pip() {
     echo "Setting up pip and pip-tools ..."
-    pip install --upgrade pip
-    pip install pip-tools
-    cp -v ../files/requirements.in .
-    echo "  Done"
+    if pip install --upgrade pip; then
+        if pip install pip-tools; then
+            cp -v ../files/requirements.in .
+            echo "  Done"
 
-    echo "Running pip-compile and installing packages ..."
-    pip-compile
-    pip-sync
-    echo "  Done"
+            echo "Running pip-compile and installing packages ..."
+            if pip-compile; then
+                if pip-sync; then
+                    echo "  Done"
+                else
+                    echo "  Error: Failed to sync packages."
+                    exit 1
+                fi
+            else
+                echo "  Error: Failed to compile requirements."
+                exit 1
+            fi
+        else
+            echo "  Error: Failed to install pip-tools."
+            exit 1
+        fi
+    else
+        echo "  Error: Failed to upgrade pip."
+        exit 1
+    fi
 }
+
 
 function create_django_project() {
     echo "Setting up Django project ..."
-    django-admin startproject $DJANGO_PROJECT_NAME
+    django-admin startproject $DJANGO_PROJECT_NAME &&
     echo "  Done"
 }
 
@@ -110,6 +131,7 @@ function modify_django_settings() {
 }
 
 function show_directions() {
+    echo "Your Django project $MASTER_PROJECT_NAME should be set up with docker."
     echo "Now, cd into " $MASTER_PROJECT_NAME
     echo "Run source pyenv/bin/activate"
     echo "Run ./getdeps.sh"
@@ -117,14 +139,14 @@ function show_directions() {
 }
 
 create_master_project;
-cd $MASTER_PROJECT_NAME
+cd $MASTER_PROJECT_NAME &&
 set_runtime;
 build_virtual_env;
 setup_pip;
 create_django_project;
-add_env_files;
-add_docker_files;
+add_env_files &&
+add_docker_files &&
 setup_nginx;
-add_scripts;
-modify_django_settings;
+add_scripts &&
+modify_django_settings &&
 show_directions;

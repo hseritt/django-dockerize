@@ -5,3 +5,4 @@ master-project/
 pyenv/
 venv/
 .venv/
+clear-docker.sh

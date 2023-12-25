@@ -6,6 +6,7 @@ DJANGO_PROJECT_NAME="myproject"
 DB_NAME="myproject"
 DB_USER="admin"
 DB_PASS="admin"
+VIRTUAL_ENV=".venv"
 
 clear; reset;
 
@@ -24,8 +25,8 @@ function set_runtime() {
 
 function build_virtual_env() {
     echo "Building virtual environment ..."
-    if python -m venv pyenv; then
-        source pyenv/bin/activate
+    if python -m venv $VIRTUAL_ENV; then
+        source $VIRTUAL_ENV/bin/activate
         echo "  Done"
     else
         echo "  Error: Failed to create the virtual environment."
@@ -126,14 +127,17 @@ function add_scripts() {
     echo "  Done"
 }
 
-function modify_django_settings() {
-    echo 'STATIC_ROOT = BASE_DIR / "staticfiles"' >> $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/settings.py
+function add_django_settings() {
+    # echo 'STATIC_ROOT = BASE_DIR / "staticfiles"' >> $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/settings.py
+    sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/settings.py > $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/settings.py
+    echo "  Done"
+
 }
 
 function show_directions() {
     echo "Your Django project $MASTER_PROJECT_NAME should be set up with docker."
     echo "Now, cd into " $MASTER_PROJECT_NAME
-    echo "Run source pyenv/bin/activate"
+    echo "Run source $VIRTUAL_ENV/bin/activate"
     echo "Run ./getdeps.sh"
     echo "And then run either (sudo) ./dev-up.sh or (sudo) ./prod-up.sh"
 }
@@ -148,5 +152,5 @@ add_env_files &&
 add_docker_files &&
 setup_nginx;
 add_scripts &&
-modify_django_settings &&
+add_django_settings &&
 show_directions;

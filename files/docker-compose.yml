@@ -15,7 +15,7 @@ services:
   db:
     image: postgres:14
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - dev_postgres_data:/var/lib/postgresql/data/
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
@@ -24,4 +24,4 @@ services:
         - "6543:5432"
 
 volumes:
-  postgres_data:
+  dev_postgres_data:

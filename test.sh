@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
+
+
 clear;
 sudo rm -rf master-project
 ./dockerize.sh &&
 cd master-project/ &&
-source pyenv/bin/activate &&
+source .venv/bin/activate &&
 ./getdeps.sh &&
 sudo ./dev-up.sh &&
 sudo ./prod-up.sh &&

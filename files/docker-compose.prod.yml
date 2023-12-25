@@ -18,7 +18,7 @@ services:
   db:
     image: postgres:14
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - prod_postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env.prod.db
   nginx:
@@ -32,6 +32,6 @@ services:
       - web
 
 volumes:
-  postgres_data:
+  prod_postgres_data:
   static_volume:
   media_volume:

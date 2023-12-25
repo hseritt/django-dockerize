@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 clear;
+sudo rm -rf master-project
 ./dockerize.sh &&
 cd master-project/ &&
 source pyenv/bin/activate &&

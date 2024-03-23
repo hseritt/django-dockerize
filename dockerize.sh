@@ -1,12 +1,33 @@
 #!/usr/bin/env bash
 
 MASTER_PROJECT_NAME="master-project"
-PYTHON_VERSION="3.11.4"
+PYTHON_VERSION="3.12.1"
 DJANGO_PROJECT_NAME="myproject"
 DB_NAME="myproject"
 DB_USER="admin"
 DB_PASS="admin"
 VIRTUAL_ENV=".venv"
+
+read -p "Enter MASTER_PROJECT_NAME (default: master-project): " MASTER_PROJECT_NAME
+MASTER_PROJECT_NAME=${MASTER_PROJECT_NAME:-"master-project"}
+
+read -p "Enter PYTHON_VERSION (default: 3.12.1): " PYTHON_VERSION
+PYTHON_VERSION=${PYTHON_VERSION:-"3.12.1"}
+
+read -p "Enter DJANGO_PROJECT_NAME (default: myproject): " DJANGO_PROJECT_NAME
+DJANGO_PROJECT_NAME=${DJANGO_PROJECT_NAME:-"myproject"}
+
+read -p "Enter DB_NAME (default: myproject): " DB_NAME
+DB_NAME=${DB_NAME:-"myproject"}
+
+read -p "Enter DB_USER (default: admin): " DB_USER
+DB_USER=${DB_USER:-"admin"}
+
+read -p "Enter DB_PASS (default: admin): " DB_PASS
+DB_PASS=${DB_PASS:-"admin"}
+
+read -p "Enter VIRTUAL_ENV (default: .venv): " VIRTUAL_ENV
+VIRTUAL_ENV=${VIRTUAL_ENV:-".venv"}
 
 clear; reset;
 
@@ -128,10 +149,8 @@ function add_scripts() {
 }
 
 function add_django_settings() {
-    # echo 'STATIC_ROOT = BASE_DIR / "staticfiles"' >> $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/settings.py
     sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/settings.py > $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/settings.py
     echo "  Done"
-
 }
 
 function show_directions() {

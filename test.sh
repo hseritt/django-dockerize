@@ -14,4 +14,3 @@ deactivate
 cd ..
 sudo rm -rf master-project
 sh clear-docker.sh
-

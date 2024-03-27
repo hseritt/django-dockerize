@@ -148,6 +148,11 @@ function add_scripts() {
     echo "  Done"
 }
 
+function add_folders() {
+    mkdir $DJANGO_PROJECT_NAME/staticfiles
+    mkdir $DJANGO_PROJECT_NAME/mediafiles
+}
+
 function add_django_settings() {
     sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/settings.py > $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/settings.py
     echo "  Done"
@@ -171,5 +176,6 @@ add_env_files &&
 add_docker_files &&
 setup_nginx;
 add_scripts &&
+add_folders &&
 add_django_settings &&
 show_directions;

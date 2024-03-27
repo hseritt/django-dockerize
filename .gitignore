@@ -6,3 +6,4 @@ pyenv/
 venv/
 .venv/
 clear-docker.sh
+tmp/

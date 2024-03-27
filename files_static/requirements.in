@@ -1,6 +1,0 @@
-django==3.2.16
-psycopg2-binary
-gunicorn
-
-pip-tools
-black

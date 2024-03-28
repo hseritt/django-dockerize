@@ -1,8 +1,10 @@
 # Dockerize
 
-django-dockerize creates a Django project and then containerizes it with a dev and prod environment (prod uses nginx and gunicorn). It also provides a Postgresql database.
+django-dockerize is a very simple way to create a Django project with docker containers. django-dockerize provides  a dev and prod environment (prod uses nginx and gunicorn). It also provides a Postgresql database.
 
-Besides providing Postgres, it is not overly opiniated. At least the packages given in the project can easily be removed and an alternate one can be provided.
+This is a good option if you are interested in setting up a basic Django project with dockerization. Typically, I would only recommend development using docker with Django in cases where your production environment makes use of containers (Kubernetes) or if you just want to get a feel for developing using docker containers.
+
+Besides providing Postgres, it is not overly opiniated. It does not come with the kitchen sink. For that I would recommend having a look at [cookiecutter-django](https://github.com/cookiecutter/cookiecutter-django) by pydanny. At least the packages given in the project can easily be removed and an alternate one can be provided.
 
 These packages are:
 

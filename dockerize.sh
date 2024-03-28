@@ -14,7 +14,7 @@ MASTER_PROJECT_NAME=${MASTER_PROJECT_NAME:-"master-project"}
 read -p "Enter PYTHON_VERSION (default: 3.12.1): " PYTHON_VERSION
 PYTHON_VERSION=${PYTHON_VERSION:-"3.12.1"}
 
-read -p "Enter DJANGO_PROJECT_NAME (default: myproject): " DJANGO_PROJECT_NAME
+read -p "Enter DJANGO_PROJECT_NAME (default: myproject - should be named as a python module): " DJANGO_PROJECT_NAME
 DJANGO_PROJECT_NAME=${DJANGO_PROJECT_NAME:-"myproject"}
 
 read -p "Enter DB_NAME (default: myproject): " DB_NAME

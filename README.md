@@ -46,4 +46,4 @@ Enter VIRTUAL_ENV (default: .venv):
 * **DB_NAME** is your database name. **DB_USER** and **DB_PASS** are your database username and password.
 * **VIRTUAL_ENV** is the installation folder of your project's Python virtual environment.
 
-In this folder where `dockerize.sh` is run, this will create a folder called master-project. You can then move it anywhere you would like. Keep in mind though that the files created in the .venv folder usually have relative paths set for the linked files. You may have to reset this if you move it elsehwere (which you should probably do).
+In this folder where `dockerize.sh` is run, this will create a folder called master-project by default (or whichever name you give it). You can then move it anywhere you would like. Keep in mind though that the files created in the .venv folder usually have relative paths set for the linked files. You may have to reset this if you move it elsehwere (which you should probably do).

@@ -145,6 +145,10 @@ function add_scripts() {
     chmod +x ./getdeps.sh
     cp ../files/dev-up.sh .
     cp ../files/prod-up.sh .
+    cp ../files/test.sh $DJANGO_PROJECT_NAME/.
+    chmod +x $DJANGO_PROJECT_NAME/test.sh
+    cp ../files/.gitignore .
+    cp .env.dev $DJANGO_PROJECT_NAME/.env
     echo "  Done"
 }
 

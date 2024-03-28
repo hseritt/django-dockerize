@@ -8,6 +8,9 @@ sudo rm -rf master-project
 cd master-project/ &&
 source .venv/bin/activate &&
 ./getdeps.sh &&
+cd myproject
+./test.sh &&
+cd ..
 ./dev-up.sh &&
 ./prod-up.sh &&
 docker-compose down -v

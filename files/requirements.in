@@ -5,3 +5,5 @@ django-environ
 
 pip-tools
 black
+flake8
+coverage

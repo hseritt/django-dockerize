@@ -26,21 +26,24 @@ Run dockerize:
 
 ```
 ./dockerize
+```
 
+You'll be asked a few questions:
+
+```
 Enter MASTER_PROJECT_NAME (default: master-project): 
 Enter PYTHON_VERSION (default: 3.12.1): 
 Enter DJANGO_PROJECT_NAME (default: myproject - should be named as a python module): 
 Enter DB_NAME (default: myproject): 
 Enter DB_USER (default: admin): 
 Enter DB_PASS (default: admin): 
-Enter VIRTUAL_ENV (default: .venv): 
-
+Enter VIRTUAL_ENV (default: .venv):
 ```
 
-MASTER_PROJECT_NAME is your main folder. You should run `git init` here.
-PYTHON_VERSION is the version of Python you are currently using. This script will not install it. I recommend using pyenv to install and manage your Python versions.
-DJANGO_PROJECT_NAME is a python module. This is the name of your Django project when you typically run `django-admin startproject [project_name]`.
-DB_NAME is your database name. DB_USER and DB_PASS are your database username and password.
-VIRTUAL_ENV is the installation folder of your project's Python virtual environment.
+*MASTER_PROJECT_NAME* is your main folder. You should run `git init` here.
+*PYTHON_VERSION* is the version of Python you are currently using. This script will not install it. I recommend using pyenv to install and manage your Python versions.
+*DJANGO_PROJECT_NAME* is the name of your Django project. Keep in mind it is a python module. So, don't use dashes or spaces. This is the name of your Django project when you typically run `django-admin startproject [project_name]`.
+*DB_NAME* is your database name. DB_USER and DB_PASS are your database username and password.
+*VIRTUAL_ENV* is the installation folder of your project's Python virtual environment.
 
 In this folder where `dockerize.sh` is run, this will create a folder called master-project. You can then move it anywhere you would like. Keep in mind though that the files created in the .venv folder usually have relative paths set for the linked files. You may have to reset this if you move it elsehwere (which you should probably do).

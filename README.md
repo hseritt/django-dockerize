@@ -15,6 +15,7 @@ These packages are:
 * Most current version of Python is 3.12.1. Feel free to change that if you prefer.
 * A couple of scripts are used to create a superuser called 'admin' (default password is 'admin').
 * Static files dir is called staticfiles and media files dir is called mediafiles.
+* Adds test.sh script to run tests and coverage. Just don't use if you don't prefer it.
 
 ## How to Use It
 

@@ -4,9 +4,9 @@ django-dockerize creates a Django project and then containerizes it with a dev a
 
 Besides providing Postgres, it is not overly opiniated. At least the packages given in the project can easily be removed and an alternate one can be provided.
 
-These are:
+These packages are:
 
-* Using pip and pip-compile with pip-sync. Pipenv or Poetry can easily be added to the project if you prefer to add them.
+* Using pip and pip-compile with pip-sync. Pip is used to install packages on the docker side. But, in docker and on the local side, Pipenv or Poetry can easily be added to the project if you prefer to add them.
 * Gunicorn. You can switch that for guvicorn if you prefer.
 * django-environ is used to handle project environment settings.
 * black is included for formatting.
@@ -19,7 +19,7 @@ These are:
 Do a git clone of this project:
 
 ```
-# git clone git@github.com:hseritt/django-dockerize.git
+git clone git@github.com:hseritt/django-dockerize.git
 ```
 
 Run dockerize:

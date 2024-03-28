@@ -1,4 +1,4 @@
-# Dockerize
+# Django-Dockerize
 
 django-dockerize is a very simple way to create a Django project with docker containers. django-dockerize provides  a dev and prod environment (prod uses nginx and gunicorn). It also provides a Postgresql database.
 

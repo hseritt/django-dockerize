@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-docker-compose -f docker-compose.prod.yml up --build --remove-orphan
+docker compose -f docker-compose.prod.yml up --build

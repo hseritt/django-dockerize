@@ -2,6 +2,8 @@ django
 psycopg2-binary
 gunicorn
 django-environ
+django-unfold
+django-widget-tweaks
 
 pip-tools
 black

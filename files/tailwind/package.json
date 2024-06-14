@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "tw:build": "tailwindcss -o ../$DJANGO_PROJECT_NAME/staticfiles/css/styles.css --minify",
+    "tw:watch": "tailwindcss -o ../$DJANGO_PROJECT_NAME/staticfiles/css/styles.css --watch --minify"
+  },
+  "dependencies": {
+    "tailwindcss": "^3.4.4"
+  }
+}

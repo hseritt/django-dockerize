@@ -29,7 +29,7 @@ DB_PASS=${DB_PASS:-"admin"}
 read -p "Enter VIRTUAL_ENV (default: .venv): " VIRTUAL_ENV
 VIRTUAL_ENV=${VIRTUAL_ENV:-".venv"}
 
-clear; reset;
+# clear; reset;
 
 function create_master_project() {
     echo "Re-creating $MASTER_PROJECT_NAME if exists ..."
@@ -155,11 +155,23 @@ function add_scripts() {
 function add_folders() {
     mkdir $DJANGO_PROJECT_NAME/staticfiles
     mkdir $DJANGO_PROJECT_NAME/mediafiles
+    mkdir $DJANGO_PROJECT_NAME/apps
+    touch $DJANGO_PROJECT_NAME/apps/__init__.py
     cp -rf $VIRTUAL_ENV/**/**/site-packages/django/contrib/admin/static/admin $DJANGO_PROJECT_NAME/staticfiles/.
 }
 
 function add_django_settings() {
     sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/settings.py > $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/settings.py
+    echo "  Done"
+}
+
+function setup_tailwind() {
+    cp -rf ../files/tailwind .
+    sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/tailwind/package.json > tailwind/package.json
+    sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/tailwind/tailwind.config.js > tailwind/tailwind.config.js
+    cd tailwind
+    npm install
+    cd ..
     echo "  Done"
 }
 
@@ -183,4 +195,5 @@ setup_nginx;
 add_scripts &&
 add_folders &&
 add_django_settings &&
+setup_tailwind &&
 show_directions;

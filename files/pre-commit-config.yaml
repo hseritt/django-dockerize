@@ -1,0 +1,58 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v3.2.0
+  hooks:
+  - id: check-added-large-files
+    args: ['--maxkb=10000']
+
+- repo: local
+  hooks:
+    - id: runflake8
+      name: runflake8
+      entry: bash -c "cd $DJANGO_PROJECT_NAME && poetry run flake8 --exclude=apps/**/migrations,**/__init__.py"
+      language: system
+      pass_filenames: false
+      verbose: true
+      fail_fast: true
+
+- repo: local
+  hooks:
+    - id: runtests
+      name: runtests
+      entry: bash -c "cd $DJANGO_PROJECT_NAME && poetry run coverage run --omit=**/migrations/*,manage.py,config/settings/__init__.py,apps/**/models.py manage.py test"
+      language: system
+      pass_filenames: false
+      verbose: true
+      fail_fast: true
+
+- repo: local
+  hooks:
+    - id: coverage
+      name: coverage
+      entry: bash -c "cd $DJANGO_PROJECT_NAME && poetry run coverage report -m"
+      language: system
+      pass_filenames: false
+      verbose: true
+      fail_fast: true
+
+- repo: local
+  hooks:
+    - id: pip-audit
+      name: pip-audit
+      entry: bash -c "cd $DJANGO_PROJECT_NAME && poetry run pip-audit"
+      language: system
+      pass_filenames: false
+      verbose: true
+      fail_fast: true
+
+- repo: local
+  hooks:
+    - id: documentation
+      name: documentation
+      entry: echo "Did you add documentation?"
+      language: system
+      pass_filenames: false
+      verbose: true
+      fail_fast: true

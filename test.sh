@@ -3,6 +3,7 @@
 
 
 clear;
+source deactivate &&
 sudo rm -rf master-project
 ./dockerize.sh &&
 cd master-project/ &&
@@ -17,4 +18,4 @@ docker-compose down -v
 docker-compose -f docker-compose.prod.yml down -v
 deactivate
 cd ..
-sudo rm -rf master-project
+# sudo rm -rf master-project

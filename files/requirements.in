@@ -5,7 +5,10 @@ django-environ
 django-unfold
 django-widget-tweaks
 
-pip-tools
 black
-flake8
 coverage
+flake8
+pip-audit
+pip-tools
+poetry
+pre-commit

@@ -151,7 +151,6 @@ function add_scripts() {
     cp ../files/.gitignore .
     cp .env.dev $DJANGO_PROJECT_NAME/.env
     sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/pre-commit-config.yaml > ./.pre-commit-config.yaml
-    cp ../files/activate $VIRTUAL_ENV/bin/.
     echo "  Done"
 }
 

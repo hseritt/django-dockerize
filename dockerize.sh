@@ -39,6 +39,7 @@ function create_master_project() {
 }
 
 function set_runtime() {
+    pyenv install -s $PYTHON_VERSION
     echo "Setting runtime ..."
     echo "python-$PYTHON_VERSION" > runtime.txt
     echo "  Done"
@@ -46,7 +47,7 @@ function set_runtime() {
 
 function build_virtual_env() {
     echo "Building virtual environment ..."
-    if python -m venv $VIRTUAL_ENV; then
+    if python -m venv --copies $VIRTUAL_ENV; then
         source $VIRTUAL_ENV/bin/activate
         echo "  Done"
     else
@@ -149,6 +150,8 @@ function add_scripts() {
     chmod +x $DJANGO_PROJECT_NAME/test.sh
     cp ../files/.gitignore .
     cp .env.dev $DJANGO_PROJECT_NAME/.env
+    sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/pre-commit-config.yaml > ./.pre-commit-config.yaml
+    cp ../files/activate $VIRTUAL_ENV/bin/.
     echo "  Done"
 }
 

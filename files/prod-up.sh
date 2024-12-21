@@ -1,3 +1,6 @@
 #!/usr/bin/env bash
 
-docker compose -f docker-compose.prod.yml up --build
+clear
+poetry export --with dev -f requirements.txt --output requirements.txt
+cp requirements.txt $DJANGO_PROJECT_NAME/requirements.txt
+docker compose -f docker-compose.prod.yml up --remove-orphans --build --force-recreate

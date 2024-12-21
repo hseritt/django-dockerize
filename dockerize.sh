@@ -145,7 +145,9 @@ function add_scripts() {
     sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/getdeps.sh > ./getdeps.sh
     chmod +x ./getdeps.sh
     cp ../files/dev-up.sh .
+    sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/dev-up.sh > ./dev-up.sh
     cp ../files/prod-up.sh .
+    sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/prod-up.sh > ./prod-up.sh
     cp ../files/test.sh $DJANGO_PROJECT_NAME/.
     chmod +x $DJANGO_PROJECT_NAME/test.sh
     cp ../files/.gitignore .

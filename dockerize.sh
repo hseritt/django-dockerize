@@ -153,15 +153,17 @@ function add_scripts() {
     cp ../files/.gitignore .
     cp .env.dev $DJANGO_PROJECT_NAME/.env
     sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/pre-commit-config.yaml > ./.pre-commit-config.yaml
+    cp ../files/.isort.cfg $DJANGO_PROJECT_NAME/.isort.cfg
     echo "  Done"
 }
 
 function add_folders() {
     mkdir $DJANGO_PROJECT_NAME/staticfiles
+    mkdir $DJANGO_PROJECT_NAME/static
     mkdir $DJANGO_PROJECT_NAME/mediafiles
     mkdir $DJANGO_PROJECT_NAME/apps
     touch $DJANGO_PROJECT_NAME/apps/__init__.py
-    cp -rf $VIRTUAL_ENV/**/**/site-packages/django/contrib/admin/static/admin $DJANGO_PROJECT_NAME/staticfiles/.
+    cp -rf $VIRTUAL_ENV/**/**/site-packages/django/contrib/admin/static/admin $DJANGO_PROJECT_NAME/static/.
 }
 
 function add_django_settings() {

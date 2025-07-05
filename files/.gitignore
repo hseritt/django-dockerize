@@ -1,3 +1,10 @@
 *.pyc
 venv/
 .venv/
+node_modules/
+.env*
+__pycache__/
+.coverage*
+staticfiles/
+mediafiles/
+fixtures/

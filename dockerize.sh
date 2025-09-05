@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 MASTER_PROJECT_NAME="master-project"
-PYTHON_VERSION="3.12.1"
+PYTHON_VERSION="3.12.11"
 DJANGO_PROJECT_NAME="myproject"
 DB_NAME="myproject"
 DB_USER="admin"
@@ -11,8 +11,8 @@ VIRTUAL_ENV=".venv"
 read -p "Enter MASTER_PROJECT_NAME (default: master-project): " MASTER_PROJECT_NAME
 MASTER_PROJECT_NAME=${MASTER_PROJECT_NAME:-"master-project"}
 
-read -p "Enter PYTHON_VERSION (default: 3.12.1): " PYTHON_VERSION
-PYTHON_VERSION=${PYTHON_VERSION:-"3.12.1"}
+read -p "Enter PYTHON_VERSION (default: 3.12.11): " PYTHON_VERSION
+PYTHON_VERSION=${PYTHON_VERSION:-"3.12.11"}
 
 read -p "Enter DJANGO_PROJECT_NAME (default: myproject - should be named as a python module): " DJANGO_PROJECT_NAME
 DJANGO_PROJECT_NAME=${DJANGO_PROJECT_NAME:-"myproject"}

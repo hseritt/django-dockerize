@@ -2,7 +2,6 @@
 
 
 
-clear;
 source deactivate &&
 sudo rm -rf master-project
 ./dockerize.sh &&

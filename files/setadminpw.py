@@ -6,7 +6,7 @@ import sys
 import django
 
 sys.path.append(".")
-os.environ["DJANGO_SETTINGS_MODULE"] = "$DJANGO_PROJECT_NAME.settings"
+os.environ["DJANGO_SETTINGS_MODULE"] = "config.settings"
 
 django.setup()
 

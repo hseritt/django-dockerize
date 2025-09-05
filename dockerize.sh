@@ -94,6 +94,31 @@ function create_django_project() {
     echo "  Done"
 }
 
+function set_config_dir() {
+    echo "Setting up config directory ..."
+    echo "We are in $(pwd)"
+    mkdir $DJANGO_PROJECT_NAME/config
+    mv $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/settings.py $DJANGO_PROJECT_NAME/config/.
+    mv $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/urls.py $DJANGO_PROJECT_NAME/config/.
+    mv $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/wsgi.py $DJANGO_PROJECT_NAME/config/.
+    mv $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/asgi.py $DJANGO_PROJECT_NAME/config/.
+    sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/manage.py
+    # Skip setadminpw.py and docker-compose files that don't exist yet
+    if [ -f "$DJANGO_PROJECT_NAME/setadminpw.py" ]; then
+        sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/setadminpw.py
+    fi
+    sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/config/wsgi.py
+    sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/config/asgi.py
+    sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/config/settings.py
+
+    if [ -f "docker-compose.prod.yml" ]; then
+        sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" docker-compose.prod.yml
+    fi
+
+    rm -rf $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME
+    echo "  Done"
+}
+
 function add_env_files() {
     echo "Adding environment files ..."
     sed "s/\$DB_NAME/${DB_NAME}/g" ../files/.env.dev > .env.dev
@@ -169,7 +194,7 @@ function add_folders() {
 }
 
 function add_django_settings() {
-    sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/settings.py > $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/settings.py
+    sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/settings.py > $DJANGO_PROJECT_NAME/config/settings.py
     echo "  Done"
 }
 
@@ -197,6 +222,7 @@ set_runtime;
 build_virtual_env;
 setup_poetry;
 create_django_project;
+set_config_dir
 add_env_files &&
 add_docker_files &&
 setup_nginx;

@@ -5,7 +5,7 @@ services:
     build:
       context: ./$DJANGO_PROJECT_NAME
       dockerfile: Dockerfile.prod
-    command: gunicorn $DJANGO_PROJECT_NAME.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_volume:/home/$DJANGO_PROJECT_NAME/web/staticfiles
       - media_volume:/home/$DJANGO_PROJECT_NAME/web/mediafiles

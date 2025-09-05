@@ -153,7 +153,7 @@ function add_docker_files() {
     echo "  Done"
 
     echo "Adding entrypoint files ..."
-    cp -v ../files/entrypoint.* $DJANGO_PROJECT_NAME/.
+    cp ../files/entrypoint.* $DJANGO_PROJECT_NAME/.
     echo "  Done"
 }
 
@@ -169,8 +169,6 @@ function add_scripts() {
     echo "Additional scripts ..."
     cp ../files/createadmin.sh $DJANGO_PROJECT_NAME/.
     sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/setadminpw.py > $DJANGO_PROJECT_NAME/setadminpw.py
-    sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/getdeps.sh > ./getdeps.sh
-    chmod +x ./getdeps.sh
     cp ../files/dev-up.sh .
     sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/dev-up.sh > ./dev-up.sh
     cp ../files/prod-up.sh .
@@ -212,7 +210,6 @@ function show_directions() {
     echo "Your Django project $MASTER_PROJECT_NAME should be set up with docker."
     echo "Now, cd into " $MASTER_PROJECT_NAME
     echo "Run source $VIRTUAL_ENV/bin/activate"
-    echo "Run ./getdeps.sh"
     echo "And then run either (sudo) ./dev-up.sh or (sudo) ./prod-up.sh"
 }
 

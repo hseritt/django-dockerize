@@ -8,7 +8,6 @@ sudo rm -rf master-project
 ./dockerize.sh &&
 cd master-project/ &&
 source .venv/bin/activate &&
-./getdeps.sh &&
 cd myproject
 ./test.sh &&
 cd ..

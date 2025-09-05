@@ -56,33 +56,35 @@ function build_virtual_env() {
     fi
 }
 
-function setup_pip() {
-    echo "Setting up pip and pip-tools ..."
-    if pip install --upgrade pip; then
-        if pip install pip-tools; then
-            cp -v ../files/requirements.in .
-            echo "  Done"
-
-            echo "Running pip-compile and installing packages ..."
-            if pip-compile; then
-                if pip-sync; then
-                    echo "  Done"
-                else
-                    echo "  Error: Failed to sync packages."
-                    exit 1
-                fi
-            else
-                echo "  Error: Failed to compile requirements."
-                exit 1
-            fi
-        else
-            echo "  Error: Failed to install pip-tools."
-            exit 1
-        fi
+function setup_poetry() {
+    echo "Setting up Poetry ..."
+    if pip install poetry; then
+        echo "  Done"
     else
-        echo "  Error: Failed to upgrade pip."
+        echo "  Error: Failed to install Poetry."
         exit 1
     fi
+
+    poetry init --no-interaction --name=$DJANGO_PROJECT_NAME  --author=admin@example.org --python=">=3.12,<4"
+
+    echo "Adding dependencies to Poetry ..."
+    poetry add django \
+        psycopg2-binary \
+        gunicorn \
+        django-environ \
+        django-unfold \
+        django-widget-tweaks
+
+    poetry add --group dev black \
+        coverage \
+        flake8 \
+        pip-audit \
+        pip-tools \
+        poetry \
+        poetry-plugin-export \
+        pre-commit \
+        djlint
+    echo "  Done"
 }
 
 
@@ -193,7 +195,7 @@ create_master_project;
 cd $MASTER_PROJECT_NAME &&
 set_runtime;
 build_virtual_env;
-setup_pip;
+setup_poetry;
 create_django_project;
 add_env_files &&
 add_docker_files &&

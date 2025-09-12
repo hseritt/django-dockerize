@@ -22,6 +22,58 @@ services:
       - POSTGRES_DB=$DJANGO_PROJECT_NAME
     ports:
         - "6543:5432"
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   ports:
+  #     - "11435:11434"
+  #   volumes:
+  #     - ollama_data:/root/.ollama
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: 1
+  #             capabilities: [gpu]
+  #   restart: unless-stopped
+  #   depends_on:
+  #     ollama-setup:
+  #       condition: service_completed_successfully
+  #   stop_grace_period: 4s
+  #   init: true
+
+  # ollama-setup:
+  #   image: curlimages/curl:latest
+  #   volumes:
+  #     - ollama_data:/models
+  #   depends_on:
+  #     - ollama-temp
+  #   command:
+  #     - sh
+  #     - -c
+  #     - |
+  #       echo 'Waiting for ollama to be ready...'
+  #       while ! curl -s http://ollama-temp:11434/api/tags > /dev/null 2>&1; do
+  #         sleep 1
+  #       done
+  #       echo 'Ollama is ready, pulling model...'
+  #       curl -X POST http://ollama-temp:11434/api/pull -d '{"name":"llama3.2"}'
+  #       echo 'Model pulled successfully'
+
+  # ollama-temp:
+  #   image: ollama/ollama:latest
+  #   volumes:
+  #     - ollama_data:/root/.ollama
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: 1
+  #             capabilities: [gpu]
+  #   stop_grace_period: 4s
+  #   init: true
 
 volumes:
   dev_postgres_data:
+  # ollama_data:

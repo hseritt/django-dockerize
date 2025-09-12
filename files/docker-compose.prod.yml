@@ -30,8 +30,48 @@ services:
       - 80:80
     depends_on:
       - web
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11435:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    depends_on:
+      - ollama-setup
+
+  ollama-setup:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama_data:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    entrypoint: |
+      /bin/bash -c "
+      # Start ollama in background
+      /bin/ollama serve &
+      # Wait for server to be ready
+      sleep 5
+      # Pull models if they don't exist
+      /bin/ollama list | grep -q llama3.2 || /bin/ollama pull llama3.2
+      # Keep container running briefly then exit
+      sleep 2
+      "
 
 volumes:
   prod_postgres_data:
   static_volume:
   media_volume:
+  ollama_data:

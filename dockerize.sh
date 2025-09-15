@@ -84,7 +84,45 @@ function setup_poetry() {
         poetry-plugin-export \
         pre-commit \
         djlint
+
+    echo "Adding tool configurations to pyproject.toml ..."
+    cat >> pyproject.toml << 'EOF'
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+coverage = "^7.10.6"
+flake8 = "^7.3.0"
+pip-audit = "^2.9.0"
+pip-tools = "^7.5.0"
+poetry = "^2.1.4"
+poetry-plugin-export = "^1.9.0"
+pre-commit = "^4.3.0"
+djlint = "^1.36.4"
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | migrations
+)/
+'''
+# Custom spacing - Black handles this through its default behavior
+# One-liners stay together, multi-line statements get spaced
+skip-string-normalization = false
+EOF
     echo "  Done"
+    poetry lock
 }
 
 
@@ -179,6 +217,9 @@ function add_scripts() {
     cp .env.dev $DJANGO_PROJECT_NAME/.env
     sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/pre-commit-config.yaml > ./.pre-commit-config.yaml
     cp ../files/.isort.cfg $DJANGO_PROJECT_NAME/.isort.cfg
+    cp ../files/.djlintrc $DJANGO_PROJECT_NAME/.djlintrc
+    cp ../files/.prettierrc $DJANGO_PROJECT_NAME/.prettierrc
+    cp ../files/.flake8 $DJANGO_PROJECT_NAME/.flake8
     echo "  Done"
 }
 

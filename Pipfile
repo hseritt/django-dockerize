@@ -4,8 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pipenv = "*"
-install = "*"
 django = "<5,>=4.2"
 # django = ">=5"
 

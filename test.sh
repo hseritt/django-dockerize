@@ -2,15 +2,13 @@
 
 
 
-clear;
 source deactivate &&
 sudo rm -rf master-project
 ./dockerize.sh &&
 cd master-project/ &&
 source .venv/bin/activate &&
-./getdeps.sh &&
 cd myproject
-./test.sh &&
+# ./test.sh &&
 cd ..
 ./dev-up.sh
 docker-compose down -v

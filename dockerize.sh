@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 MASTER_PROJECT_NAME="master-project"
-PYTHON_VERSION="3.12.1"
+PYTHON_VERSION="3.12.11"
 DJANGO_PROJECT_NAME="myproject"
 DB_NAME="myproject"
 DB_USER="admin"
@@ -11,8 +11,8 @@ VIRTUAL_ENV=".venv"
 read -p "Enter MASTER_PROJECT_NAME (default: master-project): " MASTER_PROJECT_NAME
 MASTER_PROJECT_NAME=${MASTER_PROJECT_NAME:-"master-project"}
 
-read -p "Enter PYTHON_VERSION (default: 3.12.1): " PYTHON_VERSION
-PYTHON_VERSION=${PYTHON_VERSION:-"3.12.1"}
+read -p "Enter PYTHON_VERSION (default: 3.12.11): " PYTHON_VERSION
+PYTHON_VERSION=${PYTHON_VERSION:-"3.12.11"}
 
 read -p "Enter DJANGO_PROJECT_NAME (default: myproject - should be named as a python module): " DJANGO_PROJECT_NAME
 DJANGO_PROJECT_NAME=${DJANGO_PROJECT_NAME:-"myproject"}
@@ -56,39 +56,104 @@ function build_virtual_env() {
     fi
 }
 
-function setup_pip() {
-    echo "Setting up pip and pip-tools ..."
-    if pip install --upgrade pip; then
-        if pip install pip-tools; then
-            cp -v ../files/requirements.in .
-            echo "  Done"
-
-            echo "Running pip-compile and installing packages ..."
-            if pip-compile; then
-                if pip-sync; then
-                    echo "  Done"
-                else
-                    echo "  Error: Failed to sync packages."
-                    exit 1
-                fi
-            else
-                echo "  Error: Failed to compile requirements."
-                exit 1
-            fi
-        else
-            echo "  Error: Failed to install pip-tools."
-            exit 1
-        fi
+function setup_poetry() {
+    echo "Setting up Poetry ..."
+    if pip install poetry; then
+        echo "  Done"
     else
-        echo "  Error: Failed to upgrade pip."
+        echo "  Error: Failed to install Poetry."
         exit 1
     fi
+
+    poetry init --no-interaction --name=$DJANGO_PROJECT_NAME  --author=admin@example.org --python=">=3.12,<4"
+
+    echo "Adding dependencies to Poetry ..."
+    poetry add django \
+        psycopg2-binary \
+        gunicorn \
+        django-environ \
+        django-unfold \
+        django-widget-tweaks
+
+    poetry add --group dev black \
+        coverage \
+        flake8 \
+        pip-audit \
+        pip-tools \
+        poetry \
+        poetry-plugin-export \
+        pre-commit \
+        djlint
+
+    echo "Adding tool configurations to pyproject.toml ..."
+    cat >> pyproject.toml << 'EOF'
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+coverage = "^7.10.6"
+flake8 = "^7.3.0"
+pip-audit = "^2.9.0"
+pip-tools = "^7.5.0"
+poetry = "^2.1.4"
+poetry-plugin-export = "^1.9.0"
+pre-commit = "^4.3.0"
+djlint = "^1.36.4"
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | migrations
+)/
+'''
+# Custom spacing - Black handles this through its default behavior
+# One-liners stay together, multi-line statements get spaced
+skip-string-normalization = false
+EOF
+    echo "  Done"
+    poetry lock
 }
 
 
 function create_django_project() {
     echo "Setting up Django project ..."
     django-admin startproject $DJANGO_PROJECT_NAME &&
+    echo "  Done"
+}
+
+function set_config_dir() {
+    echo "Setting up config directory ..."
+    echo "We are in $(pwd)"
+    mkdir $DJANGO_PROJECT_NAME/config
+    mv $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/settings.py $DJANGO_PROJECT_NAME/config/.
+    mv $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/urls.py $DJANGO_PROJECT_NAME/config/.
+    mv $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/wsgi.py $DJANGO_PROJECT_NAME/config/.
+    mv $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/asgi.py $DJANGO_PROJECT_NAME/config/.
+    sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/manage.py
+    # Skip setadminpw.py and docker-compose files that don't exist yet
+    if [ -f "$DJANGO_PROJECT_NAME/setadminpw.py" ]; then
+        sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/setadminpw.py
+    fi
+    sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/config/wsgi.py
+    sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/config/asgi.py
+    sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/config/settings.py
+
+    if [ -f "docker-compose.prod.yml" ]; then
+        sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" docker-compose.prod.yml
+    fi
+
+    rm -rf $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME
     echo "  Done"
 }
 
@@ -126,7 +191,7 @@ function add_docker_files() {
     echo "  Done"
 
     echo "Adding entrypoint files ..."
-    cp -v ../files/entrypoint.* $DJANGO_PROJECT_NAME/.
+    cp ../files/entrypoint.* $DJANGO_PROJECT_NAME/.
     echo "  Done"
 }
 
@@ -142,8 +207,6 @@ function add_scripts() {
     echo "Additional scripts ..."
     cp ../files/createadmin.sh $DJANGO_PROJECT_NAME/.
     sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/setadminpw.py > $DJANGO_PROJECT_NAME/setadminpw.py
-    sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/getdeps.sh > ./getdeps.sh
-    chmod +x ./getdeps.sh
     cp ../files/dev-up.sh .
     sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/dev-up.sh > ./dev-up.sh
     cp ../files/prod-up.sh .
@@ -154,6 +217,9 @@ function add_scripts() {
     cp .env.dev $DJANGO_PROJECT_NAME/.env
     sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/pre-commit-config.yaml > ./.pre-commit-config.yaml
     cp ../files/.isort.cfg $DJANGO_PROJECT_NAME/.isort.cfg
+    cp ../files/.djlintrc $DJANGO_PROJECT_NAME/.djlintrc
+    cp ../files/.prettierrc $DJANGO_PROJECT_NAME/.prettierrc
+    cp ../files/.flake8 $DJANGO_PROJECT_NAME/.flake8
     echo "  Done"
 }
 
@@ -167,7 +233,7 @@ function add_folders() {
 }
 
 function add_django_settings() {
-    sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/settings.py > $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/settings.py
+    sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/settings.py > $DJANGO_PROJECT_NAME/config/settings.py
     echo "  Done"
 }
 
@@ -185,7 +251,6 @@ function show_directions() {
     echo "Your Django project $MASTER_PROJECT_NAME should be set up with docker."
     echo "Now, cd into " $MASTER_PROJECT_NAME
     echo "Run source $VIRTUAL_ENV/bin/activate"
-    echo "Run ./getdeps.sh"
     echo "And then run either (sudo) ./dev-up.sh or (sudo) ./prod-up.sh"
 }
 
@@ -193,8 +258,9 @@ create_master_project;
 cd $MASTER_PROJECT_NAME &&
 set_runtime;
 build_virtual_env;
-setup_pip;
+setup_poetry;
 create_django_project;
+set_config_dir
 add_env_files &&
 add_docker_files &&
 setup_nginx;

@@ -1,52 +1,223 @@
 # Django-Dockerize
 
-django-dockerize is a very simple way to create a Django project with docker containers. django-dockerize provides  a dev and prod environment (prod uses nginx and gunicorn). It also provides a Postgresql database.
+A streamlined tool for bootstrapping Django projects with complete Docker containerization. Get from zero to a production-ready Django application in minutes.
 
-This is a good option if you are interested in setting up a basic Django project with dockerization. Typically, I would only recommend development using docker with Django in cases where your production environment makes use of containers (Kubernetes) or if you just want to get a feel for developing using docker containers.
+## 🚀 Overview
 
-Besides providing Postgres, it is not overly opiniated. It does not come with the kitchen sink. For that I would recommend having a look at [cookiecutter-django](https://github.com/cookiecutter/cookiecutter-django) by pydanny. At least the packages given in the project can easily be removed and an alternate one can be provided.
+Django-Dockerize automates the creation of a fully containerized Django project with separate development and production environments. It provides everything you need to start building Django applications with modern deployment practices.
 
-These packages are:
+### ✨ What You Get
 
-* Using pip and pip-compile with pip-sync. Pip is used to install packages on the docker side. But, in docker and on the local side, Pipenv or Poetry can easily be added to the project if you prefer to add them.
-* Gunicorn. You can switch that for guvicorn if you prefer.
-* django-environ is used to handle project environment settings.
-* black is included for formatting.
-* Most current version of Python is 3.12.1. Feel free to change that if you prefer.
-* A couple of scripts are used to create a superuser called 'admin' (default password is 'admin').
-* Static files dir is called staticfiles and media files dir is called mediafiles.
-* Adds test.sh script to run tests and coverage. Just don't use if you don't prefer it.
+- **Complete Django project** with Docker containerization
+- **Development environment** with hot-reload and debugging support
+- **Production environment** with Nginx reverse proxy and Gunicorn WSGI server
+- **PostgreSQL database** with persistent volumes
+- **Code quality tools** including Black formatter, pre-commit hooks, and linting
+- **Testing setup** with coverage reporting
+- **Admin user creation** with convenient scripts
+- **Environment management** using django-environ
 
-## How to Use It
+### 🎯 When to Use This
 
-Do a git clone of this project:
+Perfect for:
+- Setting up new Django projects quickly
+- Learning Django with Docker
+- Production deployments using containers (Kubernetes, Docker Swarm)
+- Teams wanting consistent development environments
+- Projects requiring PostgreSQL from day one
+
+**Not Opinionated**: Unlike heavyweight alternatives like [cookiecutter-django](https://github.com/cookiecutter/cookiecutter-django), this tool provides a minimal foundation that you can customize as needed.
+
+## 📋 Prerequisites
+
+- **Python 3.12+** (managed via pyenv recommended)
+- **Docker** and **Docker Compose**
+- **Git**
+
+## 🛠 Quick Start
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/hseritt/django-dockerize.git
+cd django-dockerize
+```
+
+### 2. Run the Setup Script
+
+```bash
+./dockerize.sh
+```
+
+### 3. Configure Your Project
+
+You'll be prompted for configuration details:
 
 ```
-git clone git@github.com:hseritt/django-dockerize.git
+Enter MASTER_PROJECT_NAME (default: master-project): my-awesome-project
+Enter PYTHON_VERSION (default: 3.12.11): 3.12.11
+Enter DJANGO_PROJECT_NAME (default: myproject): myapp
+Enter DB_NAME (default: myproject): myapp_db
+Enter DB_USER (default: admin): dbuser
+Enter DB_PASS (default: admin): secure_password
+Enter VIRTUAL_ENV (default: .venv): .venv
 ```
 
-Run dockerize:
+### 4. Start Development
 
-```
-./dockerize
-```
-
-You'll be asked a few questions:
-
-```
-Enter MASTER_PROJECT_NAME (default: master-project): 
-Enter PYTHON_VERSION (default: 3.12.1): 
-Enter DJANGO_PROJECT_NAME (default: myproject - should be named as a python module): 
-Enter DB_NAME (default: myproject): 
-Enter DB_USER (default: admin): 
-Enter DB_PASS (default: admin): 
-Enter VIRTUAL_ENV (default: .venv):
+```bash
+cd my-awesome-project  # Your chosen project name
+./dev-up.sh           # Start development environment
 ```
 
-* **MASTER_PROJECT_NAME** is your main folder. You should run `git init` here.
-* **PYTHON_VERSION** is the version of Python you are currently using. This script will not install it. I recommend using pyenv to install and manage your Python versions.
-* **DJANGO_PROJECT_NAME** is the name of your Django project. Keep in mind it is a python module. So, don't use dashes or spaces. This is the name of your Django project when you typically run `django-admin startproject [project_name]`.
-* **DB_NAME** is your database name. **DB_USER** and **DB_PASS** are your database username and password.
-* **VIRTUAL_ENV** is the installation folder of your project's Python virtual environment.
+Your Django application will be available at: http://localhost:8000
 
-In this folder where `dockerize.sh` is run, this will create a folder called master-project by default (or whichever name you give it). You can then move it anywhere you would like. Keep in mind though that the files created in the .venv folder usually have relative paths set for the linked files. You may have to reset this if you move it elsehwere (which you should probably do).
+## 📁 Project Structure
+
+After running the setup, you'll get:
+
+```
+my-awesome-project/
+├── myapp/                          # Django project directory
+│   ├── config/                     # Django settings
+│   ├── static/                     # Static files
+│   ├── templates/                  # HTML templates
+│   ├── Dockerfile                  # Development container
+│   ├── Dockerfile.prod            # Production container
+│   ├── manage.py                   # Django management
+│   └── requirements.txt           # Python dependencies
+├── docker-compose.yml             # Development services
+├── docker-compose.prod.yml        # Production services
+├── .env.dev                       # Development environment
+├── .env.prod                      # Production environment
+├── dev-up.sh                      # Start development
+├── prod-up.sh                     # Start production
+├── test.sh                        # Run tests
+└── .venv/                         # Python virtual environment
+```
+
+## 🔧 Available Scripts
+
+### Development
+- `./dev-up.sh` - Start development environment with hot-reload
+- `./test.sh` - Run tests with coverage reporting
+- `./createadmin.sh` - Create Django superuser (admin/admin)
+- `./clear_pyc.sh` - Clean Python cache files
+
+### Production
+- `./prod-up.sh` - Start production environment with Nginx + Gunicorn
+
+### Database Access
+- **Development**: `localhost:6543` (PostgreSQL)
+- **Production**: Internal container networking
+
+## 🐳 Docker Services
+
+### Development Environment
+- **web**: Django development server (port 8000)
+- **db**: PostgreSQL 16 (port 6543)
+- **ollama** (optional): AI model service (port 11435)
+
+### Production Environment
+- **web**: Gunicorn WSGI server
+- **nginx**: Reverse proxy and static file serving
+- **db**: PostgreSQL 16 with persistent volumes
+
+## 🔐 Environment Configuration
+
+### Development (.env.dev)
+```env
+DEBUG=1
+SECRET_KEY=your-dev-secret-key
+DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+SQL_ENGINE=django.db.backends.postgresql
+SQL_DATABASE=myapp_db
+SQL_USER=dbuser
+SQL_PASSWORD=secure_password
+SQL_HOST=db
+SQL_PORT=5432
+```
+
+### Production (.env.prod)
+```env
+DEBUG=0
+SECRET_KEY=your-production-secret-key
+DJANGO_ALLOWED_HOSTS=yourdomain.com
+SQL_ENGINE=django.db.backends.postgresql
+# ... database settings
+```
+
+## 🧪 Testing & Code Quality
+
+### Run Tests
+```bash
+./test.sh
+```
+
+### Pre-commit Hooks
+The project includes pre-commit hooks for:
+- Code formatting (Black)
+- Import sorting (isort)
+- Linting (flake8)
+- Django checks
+
+### Manual Code Formatting
+```bash
+# Inside the container or virtual environment
+black .
+isort .
+flake8 .
+```
+
+## 🚀 Deployment
+
+### Local Production Testing
+```bash
+./prod-up.sh
+```
+
+### Container Orchestration
+The generated Docker files are ready for:
+- **Kubernetes** deployments
+- **Docker Swarm** clusters
+- **Cloud container services** (AWS ECS, Google Cloud Run, etc.)
+
+## 🔧 Customization
+
+### Adding Dependencies
+1. Edit `requirements.in`
+2. Run `pip-compile requirements.in`
+3. Rebuild containers: `docker-compose build`
+
+### Database Changes
+- Modify database settings in `.env.dev` or `.env.prod`
+- Update `docker-compose.yml` service configuration
+
+### Adding Services
+- Edit `docker-compose.yml` to add Redis, Celery, etc.
+- Update Django settings accordingly
+
+## 🆚 Included Technologies
+
+- **Django 5.x** - Web framework
+- **PostgreSQL 16** - Database
+- **Gunicorn** - WSGI server (production)
+- **Nginx** - Reverse proxy (production)
+- **django-environ** - Environment variable management
+- **Black** - Code formatter
+- **Pre-commit** - Git hooks for code quality
+- **Coverage.py** - Test coverage reporting
+
+## 🤝 Contributing
+
+This project is designed to be minimal and extensible. Contributions that maintain simplicity while adding value are welcome.
+
+## 📝 License
+
+This project is open source. Check the repository for license details.
+
+## 🔗 Alternatives
+
+For more feature-rich Django project templates, consider:
+- [cookiecutter-django](https://github.com/cookiecutter/cookiecutter-django) - Full-featured with many integrations
+- [django-admin startproject](https://docs.djangoproject.com/en/stable/ref/django-admin/#startproject) - Minimal Django setup

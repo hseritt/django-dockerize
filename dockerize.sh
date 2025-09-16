@@ -140,20 +140,24 @@ function set_config_dir() {
     mv $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/urls.py $DJANGO_PROJECT_NAME/config/.
     mv $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/wsgi.py $DJANGO_PROJECT_NAME/config/.
     mv $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/asgi.py $DJANGO_PROJECT_NAME/config/.
-    sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/manage.py
-    # Skip setadminpw.py and docker-compose files that don't exist yet
-    if [ -f "$DJANGO_PROJECT_NAME/setadminpw.py" ]; then
-        sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/setadminpw.py
-    fi
-    sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/config/wsgi.py
-    sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/config/asgi.py
-    sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/config/settings.py
-
-    if [ -f "docker-compose.prod.yml" ]; then
-        sed -i "s/$DJANGO_PROJECT_NAME\./config\./g" docker-compose.prod.yml
-    fi
 
     rm -rf $DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME
+
+    # Update import paths after restructuring
+    sed "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/manage.py > temp_file && mv temp_file $DJANGO_PROJECT_NAME/manage.py
+    sed "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/config/wsgi.py > temp_file && mv temp_file $DJANGO_PROJECT_NAME/config/wsgi.py
+    sed "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/config/asgi.py > temp_file && mv temp_file $DJANGO_PROJECT_NAME/config/asgi.py
+    sed "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/config/settings.py > temp_file && mv temp_file $DJANGO_PROJECT_NAME/config/settings.py
+
+    # Skip setadminpw.py and docker-compose files that don't exist yet
+    if [ -f "$DJANGO_PROJECT_NAME/setadminpw.py" ]; then
+        sed "s/$DJANGO_PROJECT_NAME\./config\./g" $DJANGO_PROJECT_NAME/setadminpw.py > temp_file && mv temp_file $DJANGO_PROJECT_NAME/setadminpw.py
+    fi
+
+    if [ -f "docker-compose.prod.yml" ]; then
+        sed "s/$DJANGO_PROJECT_NAME\./config\./g" docker-compose.prod.yml > temp_file && mv temp_file docker-compose.prod.yml
+    fi
+
     echo "  Done"
 }
 

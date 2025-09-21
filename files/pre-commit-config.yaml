@@ -21,13 +21,16 @@ repos:
     hooks:
       - id: black
         language_version: python3.12
+        fail_fast: true
 
   - repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.36.4
     hooks:
       - id: djlint-reformat-django
+        fail_fast: true
         args: [--reformat]
       - id: djlint-django
+        fail_fast: true
 
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v4.0.0-alpha.8
@@ -35,6 +38,7 @@ repos:
       - id: prettier
         files: \.(js|ts|jsx|tsx|json|css|scss|md|yaml|yml)$
         exclude: \.(min\.js|min\.css)|po/static/|node_modules/
+        fail_fast: true
 
 - repo: local
   hooks:
@@ -84,4 +88,3 @@ repos:
       language: system
       pass_filenames: false
       verbose: true
-      fail_fast: true

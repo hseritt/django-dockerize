@@ -37,7 +37,7 @@ repos:
     hooks:
       - id: prettier
         files: \.(js|ts|jsx|tsx|json|css|scss|md|yaml|yml)$
-        exclude: \.(min\.js|min\.css)|po/static/|node_modules/
+        exclude: (\.(min\.js|min\.css)$|pub/static/css/styles\.css|node_modules/)
         fail_fast: true
 
 - repo: local

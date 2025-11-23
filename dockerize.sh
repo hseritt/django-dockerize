@@ -35,6 +35,9 @@ function create_master_project() {
     echo "Re-creating $MASTER_PROJECT_NAME if exists ..."
     rm -rf $MASTER_PROJECT_NAME
     mkdir $MASTER_PROJECT_NAME
+    cd $MASTER_PROJECT_NAME
+    git init
+    cd ..
     echo "  Done"
 }
 

@@ -30,13 +30,9 @@ DEBUG = env("DEBUG")
 # exception if SECRET_KEY not in os.environ
 SECRET_KEY = env("SECRET_KEY")
 
+ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS").split(",")
+
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-
-ALLOWED_HOSTS = [
-    "localhost",
-]
 
 
 # Application definition

@@ -185,10 +185,8 @@ function add_env_files() {
 
 function add_docker_files() {
     echo "Adding docker-compose files ..."
-    sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/docker-compose.yml > ./docker-compose.yml
-    sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g" ../files/docker-compose.prod.yml > ./docker-compose.prod.yml
-    sed "s/\$DB_NAME/$DB_NAME/g" ../files/docker-compose.yml > ./docker-compose.yml
-    sed "s/\$DB_NAME/$DB_NAME/g" ../files/docker-compose.prod.yml > ./docker-compose.prod.yml
+    sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g; s/\$DB_NAME/$DB_NAME/g" ../files/docker-compose.yml > ./docker-compose.yml
+    sed "s/\$DJANGO_PROJECT_NAME/$DJANGO_PROJECT_NAME/g; s/\$DB_NAME/$DB_NAME/g" ../files/docker-compose.prod.yml > ./docker-compose.prod.yml
     echo "  Done"
 
     echo "Adding Dockerfiles ..."

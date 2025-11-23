@@ -11,9 +11,9 @@ cd myproject
 # ./test.sh &&
 cd ..
 ./dev-up.sh
-docker-compose down -v
+docker compose down -v
 ./prod-up.sh
-docker-compose -f docker-compose.prod.yml down -v
+docker compose -f docker-compose.prod.yml down -v
 deactivate
 cd ..
 # sudo rm -rf master-project

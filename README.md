@@ -12,6 +12,7 @@ Django-Dockerize automates the creation of a fully containerized Django project 
 - **Development environment** with hot-reload and debugging support
 - **Production environment** with Nginx reverse proxy and Gunicorn WSGI server
 - **PostgreSQL database** with persistent volumes
+- **Dependency management** using [uv](https://docs.astral.sh/uv/) — fast Python packaging
 - **Code quality tools** including Black formatter, pre-commit hooks, and linting
 - **Testing setup** with coverage reporting
 - **Admin user creation** with convenient scripts
@@ -31,8 +32,11 @@ Perfect for:
 ## 📋 Prerequisites
 
 - **Python 3.12+** (managed via pyenv recommended)
+- **uv** — Python packaging tool ([install instructions](https://docs.astral.sh/uv/getting-started/installation/))
 - **Docker** and **Docker Compose**
 - **Git**
+
+> If `uv` is not found on your `PATH`, the setup script will install it automatically via `pip`.
 
 ## 🛠 Quick Start
 
@@ -185,9 +189,9 @@ The generated Docker files are ready for:
 ## 🔧 Customization
 
 ### Adding Dependencies
-1. Edit `requirements.in`
-2. Run `pip-compile requirements.in`
-3. Rebuild containers: `docker-compose build`
+1. Add the package: `uv add package-name`
+2. Export the updated lockfile: `uv export --no-hashes --no-dev -o myapp/requirements.txt`
+3. Rebuild containers: `docker compose build`
 
 ### Database Changes
 - Modify database settings in `.env.dev` or `.env.prod`
@@ -197,12 +201,60 @@ The generated Docker files are ready for:
 - Edit `docker-compose.yml` to add Redis, Celery, etc.
 - Update Django settings accordingly
 
+## 📦 Managing Your Project with uv
+
+The generated project uses [uv](https://docs.astral.sh/uv/) for dependency management. All commands below should be run from your project root (the `master-project` directory, or whatever name you chose).
+
+### Install / sync dependencies
+```bash
+uv sync           # install all deps (including dev)
+uv sync --no-dev  # install production deps only
+```
+
+### Add a package
+```bash
+uv add requests                  # production dependency
+uv add --dev pytest              # development-only dependency
+```
+
+### Remove a package
+```bash
+uv remove requests
+```
+
+### Upgrade packages
+```bash
+uv lock --upgrade                # upgrade all packages in uv.lock
+uv lock --upgrade-package django # upgrade a single package
+uv sync                          # apply the updated lock to your venv
+```
+
+### Update `requirements.txt` for Docker
+The Dockerfiles install from `myapp/requirements.txt`. Regenerate it any time you change dependencies:
+```bash
+uv export --no-hashes --no-dev -o myapp/requirements.txt
+docker compose build
+```
+
+### Activate the virtual environment
+```bash
+source .venv/bin/activate
+# or, run a command directly without activating:
+uv run python manage.py shell
+```
+
+### Audit for security vulnerabilities
+```bash
+uv run pip-audit
+```
+
 ## 🆚 Included Technologies
 
 - **Django 5.x** - Web framework
 - **PostgreSQL 16** - Database
 - **Gunicorn** - WSGI server (production)
 - **Nginx** - Reverse proxy (production)
+- **uv** - Python dependency management and virtual environments
 - **django-environ** - Environment variable management
 - **Black** - Code formatter
 - **Pre-commit** - Git hooks for code quality

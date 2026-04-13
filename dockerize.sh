@@ -6,7 +6,6 @@ DJANGO_PROJECT_NAME="myproject"
 DB_NAME="myproject"
 DB_USER="admin"
 DB_PASS="admin"
-VIRTUAL_ENV=".venv"
 
 read -p "Enter MASTER_PROJECT_NAME (default: master-project): " MASTER_PROJECT_NAME
 MASTER_PROJECT_NAME=${MASTER_PROJECT_NAME:-"master-project"}
@@ -25,9 +24,6 @@ DB_USER=${DB_USER:-"admin"}
 
 read -p "Enter DB_PASS (default: admin): " DB_PASS
 DB_PASS=${DB_PASS:-"admin"}
-
-read -p "Enter VIRTUAL_ENV (default: .venv): " VIRTUAL_ENV
-VIRTUAL_ENV=${VIRTUAL_ENV:-".venv"}
 
 # clear; reset;
 
@@ -48,59 +44,46 @@ function set_runtime() {
     echo "  Done"
 }
 
-function build_virtual_env() {
-    echo "Building virtual environment ..."
-    if python -m venv --copies $VIRTUAL_ENV; then
-        source $VIRTUAL_ENV/bin/activate
-        echo "  Done"
-    else
-        echo "  Error: Failed to create the virtual environment."
-        exit 1
-    fi
-}
-
-function setup_poetry() {
-    echo "Setting up Poetry ..."
-    if pip install poetry; then
-        echo "  Done"
-    else
-        echo "  Error: Failed to install Poetry."
-        exit 1
+function setup_uv() {
+    echo "Setting up uv ..."
+    if ! command -v uv &> /dev/null; then
+        echo "  uv not found, installing ..."
+        if pip install uv; then
+            echo "  uv installed"
+        else
+            echo "  Error: Failed to install uv."
+            exit 1
+        fi
     fi
 
-    poetry init --no-interaction --name=$DJANGO_PROJECT_NAME  --author=admin@example.org --python=">=3.12,<4"
+    echo "  Upgrading uv ..."
+    if uv self update 2>/dev/null || pip install --upgrade uv; then
+        echo "  uv up to date"
+    else
+        echo "  Warning: Could not upgrade uv. Continuing with existing version."
+    fi
 
-    echo "Adding dependencies to Poetry ..."
-    poetry add django \
+    uv init --no-workspace --no-readme --name $DJANGO_PROJECT_NAME --python $PYTHON_VERSION
+    rm -f hello.py main.py
+
+    echo "Adding production dependencies ..."
+    uv add django \
         psycopg2-binary \
         gunicorn \
         django-environ \
         django-unfold \
         django-widget-tweaks
 
-    poetry add --group dev black \
+    echo "Adding development dependencies ..."
+    uv add --dev black \
         coverage \
         flake8 \
         pip-audit \
-        pip-tools \
-        poetry \
-        poetry-plugin-export \
         pre-commit \
         djlint
 
     echo "Adding tool configurations to pyproject.toml ..."
     cat >> pyproject.toml << 'EOF'
-
-[tool.poetry.group.dev.dependencies]
-black = "^25.1.0"
-coverage = "^7.10.6"
-flake8 = "^7.3.0"
-pip-audit = "^2.9.0"
-pip-tools = "^7.5.0"
-poetry = "^2.1.4"
-poetry-plugin-export = "^1.9.0"
-pre-commit = "^4.3.0"
-djlint = "^1.36.4"
 
 [tool.black]
 line-length = 88
@@ -120,18 +103,21 @@ extend-exclude = '''
   | migrations
 )/
 '''
-# Custom spacing - Black handles this through its default behavior
-# One-liners stay together, multi-line statements get spaced
 skip-string-normalization = false
 EOF
     echo "  Done"
-    poetry lock
+}
+
+function export_requirements() {
+    echo "Exporting requirements.txt ..."
+    uv export --no-hashes --no-dev -o $DJANGO_PROJECT_NAME/requirements.txt
+    echo "  Done"
 }
 
 
 function create_django_project() {
     echo "Setting up Django project ..."
-    django-admin startproject $DJANGO_PROJECT_NAME &&
+    uv run django-admin startproject $DJANGO_PROJECT_NAME &&
     echo "  Done"
 }
 
@@ -236,7 +222,8 @@ function add_folders() {
     mkdir $DJANGO_PROJECT_NAME/mediafiles
     mkdir $DJANGO_PROJECT_NAME/apps
     touch $DJANGO_PROJECT_NAME/apps/__init__.py
-    cp -rf $VIRTUAL_ENV/**/**/site-packages/django/contrib/admin/static/admin $DJANGO_PROJECT_NAME/static/.
+    DJANGO_ADMIN_STATIC=$(uv run python -c "import django, os; print(os.path.join(os.path.dirname(django.__file__), 'contrib/admin/static/admin'))")
+    cp -rf "$DJANGO_ADMIN_STATIC" $DJANGO_PROJECT_NAME/static/.
 }
 
 function add_django_settings() {
@@ -256,17 +243,17 @@ function setup_tailwind() {
 
 function show_directions() {
     echo "Your Django project $MASTER_PROJECT_NAME should be set up with docker."
-    echo "Now, cd into " $MASTER_PROJECT_NAME
-    echo "Run source $VIRTUAL_ENV/bin/activate"
+    echo "Now, cd into $MASTER_PROJECT_NAME"
     echo "And then run either (sudo) ./dev-up.sh or (sudo) ./prod-up.sh"
+    echo "To run management commands locally, use: uv run python manage.py <command>"
 }
 
 create_master_project;
 cd $MASTER_PROJECT_NAME &&
 set_runtime;
-build_virtual_env;
-setup_poetry;
+setup_uv;
 create_django_project;
+export_requirements;
 set_config_dir
 add_env_files &&
 add_docker_files &&
